@@ -30,6 +30,18 @@ apt install -y mc fail2ban curl speedtest-cli ufw unattended-upgrades update-not
 
 # Настройка автоматических обновлений
 echo -e "APT::Periodic::Update-Package-Lists \"1\";\nAPT::Periodic::Unattended-Upgrade \"1\";" | tee /etc/apt/apt.conf.d/20auto-upgrades > /dev/null
+
+# Настройка автоматических обновлений безопасности
+cat <<EOL | tee /etc/apt/apt.conf.d/50unattended-upgrades
+Unattended-Upgrade::Allowed-Origins {
+    "${distro_id}:${distro_codename}-security";
+};
+EOL
+
+# Настройка cron для автоматического обновления и перезагрузки
+(crontab -l; echo "0 0 * * 1 [ \"\$(date +\%m)\" != \"\$(date +\%m -d 'next monday')\" ] && apt update && apt upgrade -y && apt autoremove -y") | crontab -
+(crontab -l; echo "0 0 * * 1 [ \"\$(date +\%U)\" == \"\$(date +\%U -d 'first day of this month')\" ] && reboot") | crontab -
+
 systemctl restart unattended-upgrades || { echo "Не удалось перезапустить unattended-upgrades"; exit 1; }
 systemctl enable unattended-upgrades
 
@@ -72,7 +84,7 @@ service ssh reload
 # Добавление NOPASSWD для sudo пользователя
 echo "$nonroot ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers > /dev/null
 
-# Полное отключение логирования
+# Полное отключение логирования (внимание: это может быть рискованно)
 echo '########################################'
 echo 'Отключение логирования...'
 echo '########################################'
@@ -112,3 +124,4 @@ if [[ "$choice" == [Yy] ]]; then
 else
     echo "Система не будет перезагружена."
 fi
+
