@@ -6,14 +6,23 @@ if [ "$EUID" -ne 0 ]; then
     exit
 fi
 
-# Ввод пароля
+# Ввод пароля с проверкой на совпадение
 echo '########################################'
-read -sp 'Введите пароль для root и non-root пользователя: ' password
-echo
+while true; do
+    read -sp 'Введите пароль для root и non-root пользователя: ' password1
+    echo
+    read -sp 'Подтвердите пароль: ' password2
+    echo
+    if [ "$password1" == "$password2" ]; then
+        break
+    else
+        echo "Пароли не совпадают. Попробуйте еще раз."
+    fi
+done
 echo '########################################'
 
 # Установка пароля для root
-echo "root:$password" | chpasswd
+echo "root:$password1" | chpasswd
 
 # Установка обновлений и необходимых программ
 apt update -y && apt upgrade -y
@@ -50,7 +59,7 @@ service sshd reload
 nonroot="0dmin4eg"
 useradd -m -c "$nonroot" $nonroot -s /bin/bash
 usermod -aG sudo $nonroot
-echo "$nonroot:$password" | chpasswd
+echo "$nonroot:$password1" | chpasswd
 
 # Отключение root-доступа по SSH
 sed -i 's/PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
@@ -68,4 +77,4 @@ sudo uc
 # Настройка cron для автоматической очистки
 (crontab -l; echo "0 0 * * 0 sudo uc") | crontab -
 
-echo 'Установка завершена!'
+echo 'Подготовка и предарительная настройка сервера завершена!'
