@@ -58,6 +58,8 @@ ufw allow ssh
 ufw allow 2222
 ufw allow 443
 ufw enable
+ufw deny proto icmp from any to any
+ufw reload
 
 # Изменение порта SSH
 echo '########################################'
