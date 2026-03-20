@@ -51,6 +51,9 @@ sed -i -e 's/bantime  = 10m/bantime  = 1d/g' /etc/fail2ban/jail.local
 systemctl restart fail2ban || { echo "Не удалось перезапустить fail2ban"; exit 1; }
 systemctl enable fail2ban
 
+# отключение icmp дял маскировки
+sysctl -w net.ipv4.icmp_echo_ignore_all=1 && echo "net.ipv4.icmp_echo_ignore_all=1" >> /etc/sysctl.conf && sysctl -p
+
 # Настройка ufw
 ufw default deny incoming
 ufw default allow outgoing
@@ -58,8 +61,7 @@ ufw allow ssh
 ufw allow 2222
 ufw allow 443
 ufw enable
-ufw deny proto icmp from any to any
-ufw reload
+
 
 # Изменение порта SSH
 echo '########################################'
