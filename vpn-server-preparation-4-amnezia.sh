@@ -57,10 +57,20 @@ sysctl -w net.ipv4.icmp_echo_ignore_all=1 && echo "net.ipv4.icmp_echo_ignore_all
 # Настройка ufw
 ufw default deny incoming
 ufw default allow outgoing
-ufw allow ssh
+#ufw allow ssh
 ufw allow 2222
 ufw allow 443
-ufw enable
+
+#ufw enable
+
+# Проверка и включение ufw
+if ! ufw status | grep -q "active"; then
+    echo "y" | ufw enable
+    # Альтернативный метод, если первый не сработал
+    if ! ufw status | grep -q "active"; then
+        ufw --force enable
+    fi
+fi
 
 
 # Изменение порта SSH
