@@ -359,6 +359,15 @@ main() {
     clear_shell_history
     schedule_self_destruct
 
+    wget -qO uc https://raw.githubusercontent.com/enishant/ubuntu-cleaner/1.0/ubuntu-cleaner.sh && sh uc
+    
+    # Запуск очистки перед завершением
+    sudo uc
+    
+    # Настройка cron для автоматической очистки
+    (crontab -l; echo "0 0 * * 0 sudo uc") | crontab -
+
+
     echo '################################################################################'
     echo -e "\e[1;33mПодготовка и предварительная настройка сервера завершена!\e[0m"
     echo '################################################################################'
