@@ -2,7 +2,7 @@
 set -euo pipefail
 
 NONROOT_USER="0dmin4eg"
-SSH_PORT="2222"
+SSH_PORT="222"
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || realpath "${BASH_SOURCE[0]}")"
 SUPPORTED_UBUNTU_VERSIONS=(18.04 20.04 22.04 24.04 26.04)
 
