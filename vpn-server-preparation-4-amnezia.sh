@@ -153,7 +153,7 @@ configure_ufw() {
     ufw default deny incoming
     ufw default allow outgoing
     ufw allow "${SSH_PORT}/tcp" comment 'SSH'
-    ufw allow 443/tcp comment 'VPN'
+    #ufw allow 443/tcp comment 'VPN'
 
     LANG=C ufw --force enable || die "Не удалось включить UFW"
     systemctl enable ufw 2>/dev/null || true
