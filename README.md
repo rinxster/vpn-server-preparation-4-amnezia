@@ -9,29 +9,45 @@ The script configures the operating system, administrator account, SSH, UFW, fai
 
 ## Download and run
 
-The commands below download the script from the repository's `main` branch to a location that is accessible during both stages of the SSH migration.
+### Previous-style one-line run with IPv6 disabled
+
+Run the following command from the existing working SSH session:
 
 ```bash
-sudo wget -O /usr/local/sbin/refactoring-vpn-server-preparation-4-amnezia.sh \
-    https://raw.githubusercontent.com/rinxster/vpn-server-preparation-4-amnezia/main/refactoring-vpn-server-preparation-4-amnezia.sh
-sudo chmod 0755 /usr/local/sbin/refactoring-vpn-server-preparation-4-amnezia.sh
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1 && sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1 && sudo wget https://raw.githubusercontent.com/rinxster/vpn-server-preparation-4-amnezia/main/vpn-server-preparation-4-amnezia.sh -O vpn-server-preparation-4-amnezia.sh && sudo chmod +x vpn-server-preparation-4-amnezia.sh && sudo bash vpn-server-preparation-4-amnezia.sh
+```
+
+This command disables IPv6 immediately for all interfaces, default interfaces, and loopback; downloads the script from the repository's `main` branch; makes it executable; and starts the first run. Because the commands use `&&`, script execution stops if any preceding command fails.
+
+The three `sysctl -w` changes apply to the running system only and are normally lost after a reboot unless equivalent settings are stored in a persistent sysctl configuration. Disabling IPv6 loopback can also affect software that expects `::1`. Use the method below when IPv6 must remain enabled.
+
+### Download for review or reuse without disabling IPv6
+
+The following commands install the script in a shared location that remains accessible during both stages of the SSH migration:
+
+```bash
+sudo wget -O /usr/local/sbin/vpn-server-preparation-4-amnezia.sh \
+    https://raw.githubusercontent.com/rinxster/vpn-server-preparation-4-amnezia/main/vpn-server-preparation-4-amnezia.sh
+sudo chmod 0755 /usr/local/sbin/vpn-server-preparation-4-amnezia.sh
 ```
 
 Review the script and its settings before running it:
 
 ```bash
-sudo less /usr/local/sbin/refactoring-vpn-server-preparation-4-amnezia.sh
-sudoedit /usr/local/sbin/refactoring-vpn-server-preparation-4-amnezia.sh
+sudo less /usr/local/sbin/vpn-server-preparation-4-amnezia.sh
+sudoedit /usr/local/sbin/vpn-server-preparation-4-amnezia.sh
 ```
 
 If you are already logged in as `root`, `sudo` may be omitted.
 
+Both download methods expect the script to be published on GitHub as `vpn-server-preparation-4-amnezia.sh` in the `main` branch.
+
 ### First run: stage the SSH migration
 
-Run the script from the existing working SSH session:
+If you used the one-line command above, it has already started the first run. Otherwise, run the installed copy from the existing working SSH session:
 
 ```bash
-sudo /usr/local/sbin/refactoring-vpn-server-preparation-4-amnezia.sh
+sudo /usr/local/sbin/vpn-server-preparation-4-amnezia.sh
 ```
 
 The script asks for one non-empty password and confirmation. That password is assigned to both the configured administrator and `root`.
@@ -58,10 +74,16 @@ If your VPS provider has a separate cloud firewall or security group, allow TCP 
 
 ### Second run: finalize the SSH migration
 
-After login on port `222` succeeds, run the script again from that exact new session:
+After login on port `222` succeeds, run the script again from that exact new session. If you installed the shared copy, use:
 
 ```bash
-sudo /usr/local/sbin/refactoring-vpn-server-preparation-4-amnezia.sh
+sudo /usr/local/sbin/vpn-server-preparation-4-amnezia.sh
+```
+
+If the first one-line command saved the script in a directory the new administrator cannot access, download and run it again from the new session:
+
+```bash
+sudo wget https://raw.githubusercontent.com/rinxster/vpn-server-preparation-4-amnezia/main/vpn-server-preparation-4-amnezia.sh -O vpn-server-preparation-4-amnezia.sh && sudo chmod +x vpn-server-preparation-4-amnezia.sh && sudo bash vpn-server-preparation-4-amnezia.sh
 ```
 
 Finalization occurs only when the script verifies that:
@@ -238,8 +260,8 @@ The expected values are `bbr`, `fq`, and `1` respectively.
 Changes to the script should pass:
 
 ```bash
-bash -n refactoring-vpn-server-preparation-4-amnezia.sh
-shellcheck refactoring-vpn-server-preparation-4-amnezia.sh
+bash -n vpn-server-preparation-4-amnezia.sh
+shellcheck vpn-server-preparation-4-amnezia.sh
 ```
 
 Run provisioning tests only in a clean, disposable Ubuntu VM, including a second run to verify finalization and idempotency.
