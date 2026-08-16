@@ -14,7 +14,7 @@ The script configures the operating system, administrator account, SSH, UFW, fai
 Run the following command from the existing working SSH session:
 
 ```bash
-sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1 && sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1 && sudo wget https://raw.githubusercontent.com/rinxster/refactoring-vpn-server-preparation-4-amnezia/main/refactoring-vpn-server-preparation-4-amnezia.sh -O refactoring-vpn-server-preparation-4-amnezia.sh && sudo chmod +x refactoring-vpn-server-preparation-4-amnezia.sh && sudo bash refactoring-vpn-server-preparation-4-amnezia.sh
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1 && sudo sysctl -w net.ipv6.conf.lo.disable_ipv6=1 && sudo wget https://raw.githubusercontent.com/rinxster/vpn-server-preparation-4-amnezia/main/refactoring-vpn-server-preparation-4-amnezia.sh -O refactoring-vpn-server-preparation-4-amnezia.sh && sudo chmod +x refactoring-vpn-server-preparation-4-amnezia.sh && sudo bash refactoring-vpn-server-preparation-4-amnezia.sh
 ```
 
 This command disables IPv6 immediately for all interfaces, default interfaces, and loopback; downloads the script from the repository's `main` branch; makes it executable; and starts the first run. Because the commands use `&&`, script execution stops if any preceding command fails.
