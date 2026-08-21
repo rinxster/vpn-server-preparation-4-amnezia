@@ -19,7 +19,7 @@ readonly FAIL2BAN_MAX_RETRY="10"
 # Keep SSH_PORT in ALLOWED_TCP_PORTS to avoid locking yourself out.
 readonly -a ALLOWED_TCP_PORTS=(
     "${SSH_PORT}" # SSH
-    "443"         # HTTPS / VPN
+    #"443"         # HTTPS / VPN
 )
 readonly -a ALLOWED_UDP_PORTS=(
     # "51820"     # Example: WireGuard
